@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 
 import User from '../models/User.js';
 
-// Registration
-export const registration = async (req, res) => {
+// Register
+export const register = async (req, res) => {
   try {
     const { userName, password } = req.body;
 
@@ -23,6 +23,16 @@ export const registration = async (req, res) => {
       userName,
       password: hash,
     });
+
+    const token = jwt.sign(
+      {
+        id: newUser._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '30d',
+      },
+    );
 
     await newUser.save();
 

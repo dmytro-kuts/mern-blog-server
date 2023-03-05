@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { registration, login, getMe } from '../controllers/auth.js';
+import { register, login, getMe } from '../controllers/auth.js';
 import { checkAuth } from '../utils/checkAuth.js';
 
 const router = new Router();
 
-// Registration
-router.post('/registration', registration);
+// Register
+router.post('/register', register);
 
 // Login
 router.post('/login', login);
