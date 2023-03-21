@@ -12,7 +12,7 @@ export const register = async (req, res) => {
 
     if (isUsed) {
       return res.status(402).json({
-        message: "Данне ім'я вже зайнято",
+        message: 'This name is already taken',
       });
     }
 
@@ -39,11 +39,11 @@ export const register = async (req, res) => {
     res.json({
       token,
       newUser,
-      message: 'Реєстрація пройшла вдало',
+      message: 'Registration was successful',
     });
   } catch (error) {
     res.status(500).json({
-      message: 'Не вдалося зареєструватись',
+      message: 'Failed to register',
     });
   }
 };
@@ -56,14 +56,14 @@ export const login = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'Користувач не знайдений ',
+        message: 'User not found',
       });
     }
     const isValidPass = await bcrypt.compare(password, user.password);
 
     if (!isValidPass) {
       return res.status(400).json({
-        message: 'Невірний логін або пароль',
+        message: 'Invalid login or password',
       });
     }
 
@@ -80,11 +80,11 @@ export const login = async (req, res) => {
     res.json({
       token,
       user,
-      message: 'Ви авторизувалися',
+      message: 'You are logged in',
     });
   } catch (error) {
     res.status(500).json({
-      message: 'Не вдалося авторизуватися',
+      message: 'Login failed',
     });
   }
 };
@@ -96,7 +96,7 @@ export const getMe = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'Користувач не знайдений ',
+        message: 'User not found',
       });
     }
 
@@ -112,12 +112,11 @@ export const getMe = async (req, res) => {
 
     res.json({
       token,
-      user
+      user,
     });
-
   } catch (error) {
     res.status(500).json({
-      message: 'Немає доступу',
+      message: 'No access',
     });
   }
 };

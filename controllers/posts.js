@@ -83,3 +83,41 @@ export const getPostById = async (req, res) => {
     });
   }
 };
+
+// Get my posts
+export const getMyPosts = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    const list = await Promise.all(
+      user.posts.map((post) => {
+        return Post.findById(post._id);
+      }),
+    );
+
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Oops.....something went wrong',
+    });
+  }
+};
+
+// Delete post
+export const deletePost = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+    if (!post) {
+      return res.json({ message: 'Post does not exist' });
+    }
+
+    await User.findByIdAndUpdate(req.userId, {
+      $pull: { posts: req.params.id },
+    });
+
+    res.json({ message: 'The post has been deleted' });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Oops.....something went wrong',
+    });
+  }
+};

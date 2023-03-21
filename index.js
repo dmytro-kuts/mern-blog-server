@@ -2,10 +2,10 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import fileUpload from 'express-fileupload'
+import fileUpload from 'express-fileupload';
 
-import authRoute from './routes/auth.js'
-import postRoute from './routes/posts.js'
+import authRoute from './routes/auth.js';
+import postRoute from './routes/posts.js';
 
 const app = express();
 dotenv.config();
