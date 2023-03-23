@@ -5,6 +5,7 @@ import {
   getMyPosts,
   getPostById,
   deletePost,
+  updatePost,
 } from '../controllers/posts.js';
 import { checkAuth } from '../utils/checkAuth.js';
 
@@ -21,6 +22,9 @@ router.get('/all/me', checkAuth, getMyPosts);
 
 // Get post by id
 router.get('/:id', getPostById);
+
+// Update post
+router.put('/:id', checkAuth, updatePost);
 
 // Delete post
 router.delete('/:id', checkAuth, deletePost);

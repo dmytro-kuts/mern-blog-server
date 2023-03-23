@@ -102,6 +102,32 @@ export const getMyPosts = async (req, res) => {
   }
 };
 
+// Update post
+export const updatePost = async (req, res) => {
+  try {
+    const { title, text, id } = req.body;
+    const post = await Post.findById(id);
+
+    if (req.files) {
+      let imgFileName = Date.now().toString() + req.files.image.name;
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      req.files.image.mv(path.join(__dirname, '..', 'uploads', imgFileName));
+      post.imgUrl = imgFileName || '';
+    }
+
+    post.title = title;
+    post.text = text;
+
+    await post.save()
+
+    res.json(post);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Failed to update article',
+    });
+  }
+};
 // Delete post
 export const deletePost = async (req, res) => {
   try {
