@@ -10,12 +10,12 @@ export const checkAuth = (req, res, next) => {
       req.userId = decoded.id;
       next();
     } catch (error) {
-      return res.status(403).json({
+      return res.json({
         message: 'No access',
       });
     }
   } else {
-    return res.status(403).json({
+    return res.json({
       message: 'No access',
     });
   }

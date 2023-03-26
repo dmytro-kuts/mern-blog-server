@@ -6,6 +6,7 @@ import fileUpload from 'express-fileupload';
 
 import authRoute from './routes/auth.js';
 import postRoute from './routes/posts.js';
+import commentRoute from './routes/comments.js';
 
 const app = express();
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(express.static('uploads'));
 // Routes
 app.use('/auth', authRoute);
 app.use('/posts', postRoute);
+app.use('/comments', commentRoute);
 
 async function start() {
   try {
@@ -38,8 +40,8 @@ async function start() {
       .catch((err) => console.log('DB error', err));
 
     app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
-  } catch (err) {
-    return console.log(err);
+  } catch (error) {
+    return console.log(error);
   }
 }
 start();

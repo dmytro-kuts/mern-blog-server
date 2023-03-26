@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Post from '../models/Post.js';
+import Comment from '../models/Comment.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -45,7 +46,7 @@ export const createPost = async (req, res) => {
 
     return res.json(newPostWithoutImage);
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'Oops.....something went wrong',
     });
   }
@@ -63,7 +64,7 @@ export const getAllPost = async (req, res) => {
 
     res.json({ posts, popularPosts });
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'Oops.....something went wrong',
     });
   }
@@ -78,7 +79,7 @@ export const getPostById = async (req, res) => {
 
     res.json(post);
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'Oops.....something went wrong',
     });
   }
@@ -96,7 +97,7 @@ export const getMyPosts = async (req, res) => {
 
     res.json(list);
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'Oops.....something went wrong',
     });
   }
@@ -118,16 +119,17 @@ export const updatePost = async (req, res) => {
     post.title = title;
     post.text = text;
 
-    await post.save()
+    await post.save();
 
     res.json(post);
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    res.json({
       message: 'Failed to update article',
     });
   }
 };
+
 // Delete post
 export const deletePost = async (req, res) => {
   try {
@@ -142,7 +144,25 @@ export const deletePost = async (req, res) => {
 
     res.json({ message: 'The post has been deleted' });
   } catch (error) {
-    res.status(500).json({
+    res.json({
+      message: 'Oops.....something went wrong',
+    });
+  }
+};
+
+// Post Comments
+export const getPostComments = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const list = await Promise.all(
+      post.comments.map((comment) => {
+        
+        return Comment.findById(comment);
+      }),
+    );
+    res.json(list);
+  } catch (error) {
+    res.json({
       message: 'Oops.....something went wrong',
     });
   }

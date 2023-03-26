@@ -6,13 +6,13 @@ import User from '../models/User.js';
 // Register
 export const register = async (req, res) => {
   try {
-    const { userName, password } = req.body;
+    const { userName, email, password } = req.body;
 
-    const isUsed = await User.findOne({ userName });
+    const isUsed = await User.findOne({ userName, email });
 
     if (isUsed) {
-      return res.status(402).json({
-        message: 'This name is already taken',
+      return res.json({
+        message: 'This name or email is already taken',
       });
     }
 
@@ -21,6 +21,8 @@ export const register = async (req, res) => {
 
     const newUser = new User({
       userName,
+      email,
+      avatarUrl,
       password: hash,
     });
 
@@ -42,7 +44,7 @@ export const register = async (req, res) => {
       message: 'Registration was successful',
     });
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'Failed to register',
     });
   }
@@ -55,14 +57,14 @@ export const login = async (req, res) => {
     const user = await User.findOne({ userName });
 
     if (!user) {
-      return res.status(404).json({
+      return res.json({
         message: 'User not found',
       });
     }
     const isValidPass = await bcrypt.compare(password, user.password);
 
     if (!isValidPass) {
-      return res.status(400).json({
+      return res.json({
         message: 'Invalid login or password',
       });
     }
@@ -83,7 +85,7 @@ export const login = async (req, res) => {
       message: 'You are logged in',
     });
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'Login failed',
     });
   }
@@ -95,7 +97,7 @@ export const getMe = async (req, res) => {
     const user = await User.findById(req.userId);
 
     if (!user) {
-      return res.status(404).json({
+      return res.json({
         message: 'User not found',
       });
     }
@@ -115,7 +117,7 @@ export const getMe = async (req, res) => {
       user,
     });
   } catch (error) {
-    res.status(500).json({
+    res.json({
       message: 'No access',
     });
   }
