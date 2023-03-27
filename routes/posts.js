@@ -8,7 +8,7 @@ import {
   updatePost,
   getPostComments,
 } from '../controllers/posts.js';
-import { checkAuth } from '../utils/checkAuth.js';
+import { checkAuth, handleValidationErrors } from '../utils/index.js';
 
 const router = new Router();
 

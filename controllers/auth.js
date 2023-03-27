@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
 import User from '../models/User.js';
 
 // Register
@@ -8,23 +11,56 @@ export const register = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
 
-    const isUsed = await User.findOne({ userName, email });
+    const isUsed = await User.findOne({ email, userName });
 
     if (isUsed) {
       return res.json({
-        message: 'This name or email is already taken',
+        message: 'This name or email address is already taken',
       });
     }
 
     const salt = bcrypt.genSaltSync(8);
     const hash = bcrypt.hashSync(password, salt);
 
+    if (req.files) {
+      let imgFileName = Date.now().toString() + req.files.image.name;
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      req.files.image.mv(path.join(__dirname, '..', 'uploads', imgFileName));
+
+      const newUser = new User({
+        userName,
+        email,
+        avatarUrl: imgFileName,
+        password: hash,
+      });
+
+      await newUser.save();
+
+      const token = jwt.sign(
+        {
+          id: newUser._id,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: '30d',
+        },
+      );
+
+      res.json({
+        token,
+        newUser,
+        message: 'Registration was successful',
+      });
+    }
+
     const newUser = new User({
       userName,
       email,
-      avatarUrl,
+      avatarUrl: '',
       password: hash,
     });
+
+    await newUser.save();
 
     const token = jwt.sign(
       {
@@ -35,8 +71,6 @@ export const register = async (req, res) => {
         expiresIn: '30d',
       },
     );
-
-    await newUser.save();
 
     res.json({
       token,
@@ -53,12 +87,12 @@ export const register = async (req, res) => {
 // Login
 export const login = async (req, res) => {
   try {
-    const { userName, password } = req.body;
-    const user = await User.findOne({ userName });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.json({
-        message: 'User not found',
+        message: 'Invalid login or password',
       });
     }
     const isValidPass = await bcrypt.compare(password, user.password);
@@ -86,7 +120,7 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     res.json({
-      message: 'Login failed',
+      message: 'Failed to log in',
     });
   }
 };
