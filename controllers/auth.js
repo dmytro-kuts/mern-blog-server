@@ -11,8 +11,8 @@ export const register = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
 
-    const isUsed = await User.findOne({ email, userName });
-
+    const isUsed = await User.find({ email, userName });
+    
     if (isUsed) {
       return res.json({
         message: 'This name or email address is already taken',

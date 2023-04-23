@@ -4,13 +4,13 @@ import Comment from '../models/Comment.js';
 // Create Comment
 export const createComment = async (req, res) => {
   try {
-    const { postId, comment, userName } = req.body;
+    const { postId, comment, userName, userAvatar } = req.body;
 
     if (!comment) {
       return res.json({ message: 'Сomment cannot be empty' });
     }
 
-    const newComment = new Comment({ comment, userName });
+    const newComment = new Comment({ comment, userName, userAvatar });
     await newComment.save();
 
     await Post.findByIdAndUpdate(postId, {

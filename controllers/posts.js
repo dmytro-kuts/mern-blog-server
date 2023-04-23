@@ -16,6 +16,7 @@ export const createPost = async (req, res) => {
       req.files.image.mv(path.join(__dirname, '..', 'uploads', imgFileName));
 
       const newPostWithImage = new Post({
+        userAvatar: user.avatarUrl,
         userName: user.userName,
         title,
         text,
@@ -32,6 +33,7 @@ export const createPost = async (req, res) => {
     }
 
     const newPostWithoutImage = new Post({
+      userAvatar: user.avatarUrl,
       userName: user.userName,
       title,
       text,
@@ -156,7 +158,6 @@ export const getPostComments = async (req, res) => {
     const post = await Post.findById(req.params.id);
     const list = await Promise.all(
       post.comments.map((comment) => {
-        
         return Comment.findById(comment);
       }),
     );
