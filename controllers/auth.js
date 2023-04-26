@@ -11,9 +11,15 @@ export const register = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
 
-    const isUsed = await User.find({ email, userName });
-    
-    if (isUsed) {
+    const isUsedName = await User.findOne({ userName });
+    const isUsedEmail = await User.findOne({ email });
+
+    if (isUsedName) {
+      return res.json({
+        message: 'This name or email address is already taken',
+      });
+    }
+    if (isUsedEmail) {
       return res.json({
         message: 'This name or email address is already taken',
       });
@@ -46,7 +52,7 @@ export const register = async (req, res) => {
         },
       );
 
-      res.json({
+      return res.json({
         token,
         newUser,
         message: 'Registration was successful',
@@ -72,7 +78,7 @@ export const register = async (req, res) => {
       },
     );
 
-    res.json({
+    return res.json({
       token,
       newUser,
       message: 'Registration was successful',

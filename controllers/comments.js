@@ -13,11 +13,43 @@ export const createComment = async (req, res) => {
     const newComment = new Comment({ comment, userName, userAvatar });
     await newComment.save();
 
-    await Post.findByIdAndUpdate(postId, {
-      $push: { comments: newComment._id },
-    });
+    try {
+      await Post.findByIdAndUpdate(postId, {
+        $push: { comments: newComment._id },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
     res.json(newComment);
+  } catch (error) {
+    res.json({
+      message: 'Oops.....something went wrong',
+    });
+  }
+};
+
+// Delete Comment
+export const deleteComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const comment = await Comment.findByIdAndDelete(commentId);
+
+    if (!comment) {
+      return res.json({ message: 'Comment does not exist' });
+    }
+
+    await Post.findOneAndUpdate(
+      { comments: commentId },
+      {
+        $pull: { comments: commentId },
+      },
+    );
+
+    res.json({
+      _id: comment._id,
+      message: 'Comment has been deleted',
+    });
   } catch (error) {
     res.json({
       message: 'Oops.....something went wrong',

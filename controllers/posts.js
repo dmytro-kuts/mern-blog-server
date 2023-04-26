@@ -46,7 +46,7 @@ export const createPost = async (req, res) => {
       $push: { posts: newPostWithoutImage },
     });
 
-    return res.json(newPostWithoutImage);
+    res.json(newPostWithoutImage);
   } catch (error) {
     res.json({
       message: 'Oops.....something went wrong',
@@ -78,7 +78,6 @@ export const getPostById = async (req, res) => {
     const post = await Post.findByIdAndUpdate(req.params.id, {
       $inc: { views: 1 },
     });
-
     res.json(post);
   } catch (error) {
     res.json({
@@ -136,6 +135,7 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const post = await Post.findByIdAndDelete(req.params.id);
+
     if (!post) {
       return res.json({ message: 'Post does not exist' });
     }
@@ -144,7 +144,10 @@ export const deletePost = async (req, res) => {
       $pull: { posts: req.params.id },
     });
 
-    res.json({ message: 'The post has been deleted' });
+    res.json({
+      _id: post._id,
+      message: 'The post has been deleted',
+    });
   } catch (error) {
     res.json({
       message: 'Oops.....something went wrong',
@@ -156,11 +159,13 @@ export const deletePost = async (req, res) => {
 export const getPostComments = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+
     const list = await Promise.all(
       post.comments.map((comment) => {
         return Comment.findById(comment);
       }),
     );
+
     res.json(list);
   } catch (error) {
     res.json({
