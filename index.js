@@ -13,10 +13,7 @@ import likeRoute from './routes/likes.js';
 const app = express();
 dotenv.config();
 
-const PORT = process.env.PORT || 5555;
-const DB_USER = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_NAME = process.env.DB_NAME;
+const { PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
 // Middlewere
 app.use(cors());
@@ -25,6 +22,10 @@ app.use(express.json());
 app.use(express.static('uploads'));
 
 // Routes
+app.get('/', (req, res) => {
+  res.send(`Server listening on port: ${PORT}`);
+});
+
 app.use('/auth', authRoute);
 app.use('/posts', postRoute);
 app.use('/comments', commentRoute);
@@ -48,3 +49,4 @@ async function start() {
   }
 }
 start();
+
