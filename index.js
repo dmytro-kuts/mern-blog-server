@@ -16,7 +16,7 @@ dotenv.config();
 const { PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
 // Middlewere
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(fileUpload());
 app.use(express.json());
 app.use(express.static('uploads'));
